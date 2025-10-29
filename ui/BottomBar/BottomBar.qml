@@ -125,7 +125,23 @@ Rectangle {
   }
 }
 }
-        
+
+  Image {
+  id: settingsIcon
+  width: bottomBar.height * 0.6
+  height: bottomBar.height * 0.6
+  fillMode: Image.PreserveAspectFit
+  source: "qrc:/images/settingsIcon.png"
+            
+  MouseArea {
+  anchors.fill: parent
+  onClicked: {
+	// TODO: Add video functionality
+	console.log("Settings button clicked")
+  }
+}
+}
+
   Image {
   id: parkAssistIcon
   width: bottomBar.height * 0.6
@@ -174,3 +190,4 @@ Rectangle {
   hvacController: passengerHVAC
 }
 }
+

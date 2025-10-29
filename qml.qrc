@@ -49,5 +49,11 @@
     <file>images/padlockLock.png</file>
     <file>images/padlockUnlock.png</file>
     <file>images/userIcon_w.png</file>
+    <file>images/settingsIcon.png</file>
+    <file>images/stop-button.png</file>
+    <file>images/forward-button.png</file>
+    <file>images/rewind-button.png</file>
+    <file>images/play-button.png</file>
+    <file>images/pause.png</file>
   </qresource>
 </RCC>

@@ -332,7 +332,7 @@ Rectangle {
   WarningLight {
   width: parent.parent.width * 0.2
   height: width
-  active: vehicleData.highBeam
+  active: vehicleData.headlights
   lightColor: "#0088ff"
   symbol: "⚡"
   blinking: false
