@@ -11,166 +11,35 @@ import "ui/Phone"
 import "ui/ParkAssist"
 
 Window {
+    // 15 inches 
     width: 1280
     height: 720
     visible: true
-    title: qsTr("Vehicle Infotainment")
-    
-    property bool modalVisible: false
-    property string currentModal: ""
-    
+    title: qsTr("VehicleSys")
+
     LeftScreen {
-        id: leftScreen
-        visible: !modalVisible
+	id: leftScreen
     }
-    
+
     RightScreen {
-        id: rightScreen
-        visible: !modalVisible
+	id: rightScreen
     }
-    
+
     BottomBar {
-        id: bottomBar
-        onMusicClicked: showMusicPlayer()
-        onDashboardClicked: showDashboard()
-        onPhoneClicked: showPhoneInterface()
-        onParkAssistClicked: showParkAssist()
+	id: bottomBar
+	onMusicClicked: rightScreen.showMusic()
+	onDashboardClicked: rightScreen.showMap() // Map button now only restores map
+	onPhoneClicked: rightScreen.showPhone()
+	onParkAssistClicked: leftScreen.showParkAssist()
     }
-    
-    // Modal overlay
-    Rectangle {
-        id: modalOverlay
-        anchors.fill: parent
-        color: "black"
-        opacity: modalVisible ? 0.7 : 0
-        visible: modalVisible
-        
-        Behavior on opacity {
-            NumberAnimation { duration: 300 }
-        }
-        
-        MouseArea {
-            anchors.fill: parent
-            onClicked: hideModal()
-        }
-    }
-    
-    // Modal content container
-    Rectangle {
-        id: modalContainer
-        anchors.centerIn: parent
-        width: modalContent.width
-        height: modalContent.height
-        color: "transparent"
-        visible: modalVisible
-        scale: modalVisible ? 1.0 : 0.8
-        opacity: modalVisible ? 1.0 : 0
-        
-        Behavior on scale {
-            NumberAnimation { duration: 300; easing.type: Easing.OutBack }
-        }
-        
-        Behavior on opacity {
-            NumberAnimation { duration: 300 }
-        }
-        
-        Item {
-            id: modalContent
-            width: {
-                switch(currentModal) {
-                    case "dashboard": return 820
-                    case "music": return 420
-                    case "phone": return 370
-                    case "parkassist": return 420
-                    default: return 400
-                }
-            }
-            height: {
-                switch(currentModal) {
-                    case "dashboard": return 520
-                    case "music": return 320
-                    case "phone": return 470
-                    case "parkassist": return 370
-                    default: return 300
-                }
-            }
-            
-            VehicleDashboard {
-                anchors.fill: parent
-                visible: currentModal === "dashboard"
-            }
-            
-            MusicPlayerComponent {
-                anchors.fill: parent
-                visible: currentModal === "music"
-            }
-            
-            PhoneInterface {
-                anchors.fill: parent
-                visible: currentModal === "phone"
-            }
-            
-            ParkAssistComponent {
-                anchors.fill: parent
-                visible: currentModal === "parkassist"
-            }
-        }
-        
-        // Close button
-        Rectangle {
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.topMargin: -10
-            anchors.rightMargin: -10
-            width: 30
-            height: 30
-            radius: 15
-            color: "#ff4444"
-            
-            Text {
-                anchors.centerIn: parent
-                text: "×"
-                color: "white"
-                font.pixelSize: 18
-                font.bold: true
-            }
-            
-            MouseArea {
-                anchors.fill: parent
-                onClicked: hideModal()
-            }
-        }
-    }
-    
-    function showDashboard() {
-        currentModal = "dashboard"
-        modalVisible = true
-    }
-    
-    function showMusicPlayer() {
-        currentModal = "music"
-        modalVisible = true
-    }
-    
-    function showPhoneInterface() {
-        currentModal = "phone"
-        modalVisible = true
-    }
-    
-    function showParkAssist() {
-        currentModal = "parkassist"
-        modalVisible = true
-    }
-    
-    function hideModal() {
-        modalVisible = false
-        currentModal = ""
-    }
-    
+
     // Focus for key handling
     Item {
-        anchors.fill: parent
-        focus: true
-        Keys.onEscapePressed: hideModal()
+	anchors.fill: parent
+	focus: true
+	Keys.onEscapePressed: {
+	    // ESC key can return to map view
+	    rightScreen.showMap()
+	}
     }
 }

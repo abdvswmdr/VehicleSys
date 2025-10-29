@@ -49,7 +49,22 @@ QString CanBusController::status() const
 
 void CanBusController::connectToSimulator()
 {
-    connectToBus("vcan0");
+    // Always allow switching to simulation mode, regardless of current state
+    if (m_status != "Simulation Mode Active") {
+        // First disconnect from any existing connection
+        if (m_connected) {
+            disconnectFromSimulator();
+        }
+        
+        // Start simulation mode
+        m_status = "Simulation Mode Active";
+        m_connected = true;
+        m_simulationTimer->start(100); // 10Hz update rate
+        
+        emit statusChanged(m_status);
+        emit connectedChanged(m_connected);
+        qDebug() << "Switched to simulation mode";
+    }
 }
 
 void CanBusController::connectToBus(const QString &interface)
@@ -102,10 +117,7 @@ void CanBusController::connectToBus(const QString &interface)
 
 void CanBusController::disconnectFromSimulator()
 {
-    if (!m_connected) {
-        return;
-    }
-
+    // Always allow switching to CAN control mode
     m_simulationTimer->stop();
     
 #ifdef HAVE_QT_SERIALBUS
@@ -114,12 +126,42 @@ void CanBusController::disconnectFromSimulator()
         delete m_canDevice;
         m_canDevice = nullptr;
     }
-#endif
+    
+    // Try to connect to actual CAN bus
+    qDebug() << "Attempting to connect to CAN interface: vcan0";
+    
+    // Create device using socketcan plugin
+    m_canDevice = QCanBus::instance()->createDevice(QStringLiteral("socketcan"), "vcan0");
+    
+    if (m_canDevice) {
+        connect(m_canDevice, &QCanBusDevice::framesReceived, this, &CanBusController::handleFramesReceived);
+        connect(m_canDevice, &QCanBusDevice::errorOccurred, this, &CanBusController::handleErrorOccurred);
+        connect(m_canDevice, &QCanBusDevice::stateChanged, this, &CanBusController::handleStateChanged);
 
+        if (m_canDevice->connectDevice()) {
+            m_status = "Connecting to CAN Bus...";
+            emit statusChanged(m_status);
+            return;
+        } else {
+            delete m_canDevice;
+            m_canDevice = nullptr;
+        }
+    }
+    
+    // If CAN connection failed, show CAN control mode but indicate no CAN available
     m_connected = false;
-    m_status = "Disconnected";
+    m_status = "CAN Control Mode (No CAN Bus Available)";
     emit connectedChanged(m_connected);
     emit statusChanged(m_status);
+    qDebug() << "Switched to CAN control mode, but no CAN bus available";
+#else
+    // If no SerialBus support, show CAN control mode but indicate no CAN available
+    m_connected = false;
+    m_status = "CAN Control Mode (No CAN Bus Available)";
+    emit connectedChanged(m_connected);
+    emit statusChanged(m_status);
+    qDebug() << "Switched to CAN control mode, but no CAN bus support available";
+#endif
 }
 
 void CanBusController::sendFrame(quint32 frameId, const QByteArray &data)

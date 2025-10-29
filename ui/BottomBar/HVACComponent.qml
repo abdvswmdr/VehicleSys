@@ -39,20 +39,20 @@ Rectangle {
         id: targetTemperatureText
         anchors {
             left: decrementButton.right
-            leftMargin: 6
+            leftMargin: 20
             verticalCenter: parent.verticalCenter
         }
         
         text: hvacController ? hvacController.targetTemperature : "70"
-        font.pixelSize: 25
-        color: fontColor
+        font.pixelSize: 45
+        color: "#ffffff"
     }
     
     Rectangle {
         id: incrementButton
         anchors {
             left: targetTemperatureText.right
-            leftMargin: 6
+            leftMargin: 20
             top: parent.top
             bottom: parent.bottom
         }

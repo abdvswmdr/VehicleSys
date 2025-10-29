@@ -1,1 +1,3 @@
 RightScreen 1.0 RightScreen.qml
+StatusBar 1.0 StatusBar.qml
+NavigationSearchBox 1.0 NavigationSearchBox.qml

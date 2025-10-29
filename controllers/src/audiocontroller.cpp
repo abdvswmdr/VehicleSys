@@ -1,9 +1,18 @@
+/*
+ * audiocontroller.h / audiocontroller.cpp
+ * ---------------------------------------
+ * A minimal, signal-safe volume control class for embedded-vehicle HMIs.
+ *
+ * Maintainer: Abdulswamad Rama / GitHub: @abdswmdr
+ *
+ */
+
 #include "audiocontroller.h"
 
 AudioController::AudioController(QObject *parent)
-    : QObject(parent), m_volumeLevel(51)
+    : QObject(parent), m_volumeLevel(10)
 {
-    // Initialize with a default volume level of 51 (medium level)
+    // Initialize with a default volume level of 10 (low level)
 }
 
 int AudioController::volumeLevel() const

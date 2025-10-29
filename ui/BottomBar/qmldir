@@ -1,1 +1,4 @@
 BottomBar 1.0 BottomBar.qml
+HVACComponent 1.0 HVACComponent.qml
+VolumeControlComponent 1.0 VolumeControlComponent.qml
+MusicPlayerStatus 1.0 MusicPlayerStatus.qml

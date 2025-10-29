@@ -12,24 +12,25 @@ Rectangle {
     property bool active: false
     property color lightColor: "#ff4444"
     property string symbol: "⚠"
+  //property real symbolScale: 0.7    // optionally to override from caller (font.pixelSize)
     property bool blinking: false
 
     Behavior on color {
-        ColorAnimation { duration: 150 }
+        ColorAnimation { duration: 400 }
     }
 
     Behavior on border.color {
-        ColorAnimation { duration: 150 }
+        ColorAnimation { duration: 400 }
     }
 
     Text {
         anchors.centerIn: parent
         text: symbol
         color: active ? "#ffffff" : "#666"
-        font.pixelSize: 16
+        font.pixelSize: 24
         
         Behavior on color {
-            ColorAnimation { duration: 150 }
+            ColorAnimation { duration: 400 }
         }
     }
 
@@ -65,7 +66,7 @@ Rectangle {
         opacity: active ? 0.5 : 0
         
         Behavior on opacity {
-            NumberAnimation { duration: 200 }
+            NumberAnimation { duration: 300 }
         }
     }
 }

@@ -37,11 +37,11 @@ Rectangle {
         id: volumeIcon
         anchors {
             left: decrementButton.right
-            leftMargin: 6
+            leftMargin: 20
             verticalCenter: parent.verticalCenter
         }
         
-        height: parent.height * 0.5
+        height: parent.height * 0.6
         fillMode: Image.PreserveAspectFit
         
         source: {
@@ -61,7 +61,7 @@ Rectangle {
         id: volumeTextLabel
         anchors.centerIn: volumeIcon
         text: audioController.volumeLevel
-        font.pixelSize: 24
+        font.pixelSize: 40
         color: fontColor
         visible: !volumeIcon.visible
     }
@@ -70,7 +70,7 @@ Rectangle {
         id: incrementButton
         anchors {
             left: volumeIcon.right
-            leftMargin: 6
+            leftMargin: 20
             top: parent.top
             bottom: parent.bottom
         }

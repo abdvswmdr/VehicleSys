@@ -7,6 +7,7 @@
 
 #ifdef HAVE_QT_MULTIMEDIA
 #include <QMediaMetaData>
+#include <QAudio>
 #endif
 
 MediaController::MediaController(QObject *parent)
@@ -35,6 +36,13 @@ MediaController::MediaController(QObject *parent)
     // Setup media player
     m_player->setPlaylist(m_playlist);
     m_player->setVolume(m_volume);
+    
+    // Ensure audio output is properly configured
+    m_player->setAudioRole(QAudio::MusicRole);
+    qDebug() << "MediaController: Qt Multimedia available, audio role set to MusicRole";
+    qDebug() << "MediaController: Initial volume set to:" << m_volume;
+    qDebug() << "MediaController: Player state:" << m_player->state();
+    qDebug() << "MediaController: Media status:" << m_player->mediaStatus();
 
     // Connect signals
     connect(m_player, &QMediaPlayer::stateChanged, this, &MediaController::handleStateChanged);
@@ -47,6 +55,14 @@ MediaController::MediaController(QObject *parent)
 
     // Setup playlist
     m_playlist->setPlaybackMode(QMediaPlaylist::Sequential);
+    
+    qDebug() << "MediaController: Successfully initialized with Qt Multimedia";
+    qDebug() << "MediaController: Available audio outputs should be checked in system";
+#else
+    qWarning() << "MediaController: Qt Multimedia not available - audio playback will not work";
+    qWarning() << "To fix: Install qt5-multimedia package and rebuild the application";
+    qDebug() << "MediaController: Falling back to simulation mode for UI testing";
+    qDebug() << "MediaController: Audio will not actually play, but UI will function normally";
 #endif
 
     // Position update timer
@@ -134,8 +150,15 @@ void MediaController::play()
 {
 #ifdef HAVE_QT_MULTIMEDIA
     if (m_playlist->mediaCount() > 0) {
+        qDebug() << "MediaController::play() - Starting playback";
+        qDebug() << "MediaController: Current track index:" << m_playlist->currentIndex();
+        qDebug() << "MediaController: Volume level:" << m_player->volume();
+        qDebug() << "MediaController: Media count in playlist:" << m_playlist->mediaCount();
         m_player->play();
         m_positionTimer->start();
+        qDebug() << "MediaController: Play command sent to QMediaPlayer";
+    } else {
+        qWarning() << "MediaController::play() - No media in playlist";
     }
 #else
     if (m_playlistFiles.count() > 0) {
@@ -143,6 +166,8 @@ void MediaController::play()
         m_simulationTimer->start();
         emit isPlayingChanged(m_isPlaying);
         qDebug() << "Playing (simulation):" << m_currentTitle;
+    } else {
+        qWarning() << "MediaController::play() - No tracks in simulation playlist";
     }
 #endif
 }
@@ -338,10 +363,15 @@ void MediaController::playTrack(int index)
 void MediaController::setVolume(int volume)
 {
     int clampedVolume = qBound(0, volume, 100);
+    qDebug() << "MediaController::setVolume() - Requested:" << volume << "Clamped:" << clampedVolume;
     if (m_volume != clampedVolume) {
         m_volume = clampedVolume;
 #ifdef HAVE_QT_MULTIMEDIA
         m_player->setVolume(m_volume);
+        qDebug() << "MediaController: Volume set on QMediaPlayer to:" << m_volume;
+        qDebug() << "MediaController: Actual player volume now:" << m_player->volume();
+#else
+        qDebug() << "MediaController: Volume set in simulation mode to:" << m_volume;
 #endif
         emit volumeChanged(m_volume);
     }
@@ -463,7 +493,7 @@ void MediaController::handleError(QMediaPlayer::Error error)
         errorString = "Access denied - insufficient permissions";
         break;
     case QMediaPlayer::ServiceMissingError:
-        errorString = "Service missing - required media service not available";
+        errorString = "Service missing - required media service not available. Check if audio drivers are installed.";
         break;
     default:
         errorString = "Unknown media error";
@@ -471,6 +501,8 @@ void MediaController::handleError(QMediaPlayer::Error error)
     }
     
     qWarning() << "Media player error:" << errorString;
+    qWarning() << "Volume level:" << m_volume << "Audio role: Music";
+    qWarning() << "Available audio devices should be checked in system settings";
     emit mediaError(errorString);
 }
 #endif
