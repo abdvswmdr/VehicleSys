@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2025-11-01T00:00:00.000Z" agent="Claude Code" version="24.0.0">
+  <diagram name="Data Flow Diagram" id="data-flow-diagram">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="Vehicle Infotainment System - Data Flow Diagram" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="800" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- External Data Sources Section -->
+        <mxCell id="sources-section" value="External Data Sources" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="80" y="100" width="280" height="600" as="geometry" />
+        </mxCell>
+
+        <!-- CAN Bus -->
+        <mxCell id="can-bus" value="CAN Bus&#xa;(SocketCAN)&#xa;───────────────&#xa;Frames @ 10Hz:&#xa;• 0x100: RPM, Fuel&#xa;• 0x200: Speed&#xa;• 0x300: Temperature&#xa;───────────────&#xa;Format:&#xa;• ID: uint16&#xa;• Data: 8 bytes&#xa;• Scaling factors" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="100" y="140" width="240" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- GPS Simulator -->
+        <mxCell id="gps-source" value="GPS Position&#xa;(Simulated)&#xa;───────────────&#xa;Updates @ 10Hz:&#xa;• Latitude&#xa;• Longitude&#xa;• Altitude&#xa;• Heading&#xa;───────────────&#xa;Based on:&#xa;• Current route segment&#xa;• Vehicle speed&#xa;• Interpolation algorithm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="100" y="300" width="240" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- User Input -->
+        <mxCell id="user-input" value="User Input&#xa;───────────────&#xa;Sources:&#xa;• Search text entry&#xa;• Map tap/click&#xa;• Media controls&#xa;• Volume slider&#xa;───────────────&#xa;Events:&#xa;• Mouse/Touch&#xa;• Keyboard&#xa;• Gestures" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="100" y="470" width="240" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- REST API Section -->
+        <mxCell id="api-section" value="External REST APIs" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="80" y="740" width="280" height="340" as="geometry" />
+        </mxCell>
+
+        <!-- OSRM API -->
+        <mxCell id="osrm-api" value="OSRM Routing API&#xa;───────────────&#xa;Endpoint:&#xa;router.project-osrm.org&#xa;───────────────&#xa;Request:&#xa;• Start coordinate&#xa;• End coordinate&#xa;• Travel mode: driving&#xa;───────────────&#xa;Response (JSON):&#xa;• Route geometry&#xa;• Distance (meters)&#xa;• Duration (seconds)&#xa;• Turn instructions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="100" y="780" width="240" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Nominatim API -->
+        <mxCell id="nominatim-api" value="Nominatim Geocoding API&#xa;───────────────&#xa;Endpoint:&#xa;nominatim.openstreetmap.org&#xa;───────────────&#xa;Request:&#xa;• Search query string&#xa;───────────────&#xa;Response (JSON):&#xa;• Location name&#xa;• Latitude&#xa;• Longitude&#xa;• Address details" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="100" y="950" width="240" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Controllers Section -->
+        <mxCell id="controllers-section" value="C++ Controllers (Business Logic)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="440" y="100" width="360" height="980" as="geometry" />
+        </mxCell>
+
+        <!-- VehicleDataController -->
+        <mxCell id="vehicle-controller" value="VehicleDataController&#xa;───────────────&#xa;Input Data:&#xa;• CAN frames (8 bytes)&#xa;───────────────&#xa;Processing:&#xa;1. Parse frame ID&#xa;2. Extract byte data&#xa;3. Apply scaling:&#xa;   - RPM = (data[1]&lt;&lt;8 | data[0]) / 4&#xa;   - Speed = (data[1]&lt;&lt;8 | data[0]) / 10&#xa;   - Fuel = data[7] * 0.392157&#xa;   - Temp = data[6]&#xa;4. Validate ranges&#xa;5. Emit changed signals&#xa;───────────────&#xa;Output Signals:&#xa;• speedChanged(int)&#xa;• rpmChanged(int)&#xa;• fuelChanged(int)&#xa;• tempChanged(int)&#xa;───────────────&#xa;Output Properties:&#xa;• speed: int (km/h)&#xa;• rpm: int (revolutions/min)&#xa;• fuel: int (%)&#xa;• temperature: int (°C)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;align=left;" vertex="1" parent="1">
+          <mxGeometry x="460" y="140" width="320" height="280" as="geometry" />
+        </mxCell>
+
+        <!-- NavigationController -->
+        <mxCell id="nav-controller" value="NavigationController&#xa;───────────────&#xa;Input Data:&#xa;• GPS coordinates&#xa;• Vehicle speed (from VehicleDataController)&#xa;• Route JSON (from OSRM)&#xa;• Destination coordinates&#xa;───────────────&#xa;Processing:&#xa;1. Route Management:&#xa;   - Parse JSON route data&#xa;   - Store route segments&#xa;   - Calculate total distance&#xa;&#xa;2. Position Simulation:&#xa;   - Interpolate between waypoints&#xa;   - Update at speed-adjusted rate&#xa;   - Calculate progress percentage&#xa;&#xa;3. Navigation Calculations:&#xa;   - Distance to destination (Haversine)&#xa;   - Bearing to next waypoint&#xa;   - ETA estimation&#xa;   - Segment transitions&#xa;───────────────&#xa;Algorithms:&#xa;• Haversine distance:&#xa;  d = 2R·arcsin(√(sin²(Δφ/2) + cos(φ1)·cos(φ2)·sin²(Δλ/2)))&#xa;• Bearing:&#xa;  θ = atan2(sin(Δλ)·cos(φ2), cos(φ1)·sin(φ2) - sin(φ1)·cos(φ2)·cos(Δλ))&#xa;• Interpolation:&#xa;  p = p1 + (p2 - p1) × fraction&#xa;───────────────&#xa;Output Signals:&#xa;• currentPositionChanged()&#xa;• routeCalculated()&#xa;• navigationActiveChanged()&#xa;• arrivalReached()&#xa;───────────────&#xa;Output Properties:&#xa;• currentLatitude: double&#xa;• currentLongitude: double&#xa;• routePolyline: QVariantList&#xa;• routeDistance: double&#xa;• eta: QString&#xa;• currentSegment: int" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;align=left;" vertex="1" parent="1">
+          <mxGeometry x="460" y="440" width="320" height="460" as="geometry" />
+        </mxCell>
+
+        <!-- MediaController -->
+        <mxCell id="media-controller" value="MediaController&#xa;───────────────&#xa;Input Data:&#xa;• User commands (play/pause/next)&#xa;• Volume changes&#xa;───────────────&#xa;Processing:&#xa;• Control Qt Multimedia&#xa;• Track playlist&#xa;• Update playback state&#xa;───────────────&#xa;Output Signals:&#xa;• trackChanged()&#xa;• playbackStateChanged()&#xa;───────────────&#xa;Output Properties:&#xa;• currentTrack: QString&#xa;• isPlaying: bool&#xa;• volume: int" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;align=left;" vertex="1" parent="1">
+          <mxGeometry x="460" y="920" width="320" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- Qt Location Models Section -->
+        <mxCell id="qt-location-section" value="Qt Location Models" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="880" y="740" width="280" height="340" as="geometry" />
+        </mxCell>
+
+        <!-- GeocodeModel -->
+        <mxCell id="geocode-model" value="GeocodeModel&#xa;───────────────&#xa;Input:&#xa;• Search query string&#xa;───────────────&#xa;Processing:&#xa;• Query Nominatim API&#xa;• Parse JSON response&#xa;• Create location objects&#xa;───────────────&#xa;Output:&#xa;• List of locations&#xa;• Each with:&#xa;  - Name&#xa;  - Coordinate&#xa;  - Address" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="900" y="780" width="240" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- RouteModel -->
+        <mxCell id="route-model" value="RouteModel&#xa;───────────────&#xa;Input:&#xa;• Start coordinate&#xa;• End coordinate&#xa;• RouteQuery parameters&#xa;───────────────&#xa;Processing:&#xa;• Query OSRM API&#xa;• Parse route geometry&#xa;• Create MapRoute objects&#xa;───────────────&#xa;Output:&#xa;• Route object with:&#xa;  - Path coordinates&#xa;  - Distance&#xa;  - Duration&#xa;  - Segments" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="900" y="940" width="240" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- UI Components Section -->
+        <mxCell id="ui-section" value="QML UI Components (Presentation)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="880" y="100" width="640" height="600" as="geometry" />
+        </mxCell>
+
+        <!-- Dashboard Gauges -->
+        <mxCell id="dashboard-gauges" value="Dashboard Gauges&#xa;───────────────&#xa;Data Binding:&#xa;• Speedometer.speed ← vehicleData.speed&#xa;• Tachometer.rpm ← vehicleData.rpm&#xa;• FuelGauge.fuel ← vehicleData.fuel&#xa;• TempGauge.temp ← vehicleData.temperature&#xa;───────────────&#xa;Rendering:&#xa;• Canvas arc drawing&#xa;• Needle angle calculation:&#xa;  angle = ((value / maxValue) × arcSpan - arcStart) + 90°&#xa;• Digital text display&#xa;• Color coding (red zone)&#xa;───────────────&#xa;Update Rate: Immediate (property binding)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="900" y="140" width="280" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- Map Display -->
+        <mxCell id="map-display" value="Map Display&#xa;───────────────&#xa;Data Binding:&#xa;• map.center ← nav.currentPosition&#xa;• map.zoomLevel ← 16 (navigation) / 12 (idle)&#xa;───────────────&#xa;Route Visualization:&#xa;• MapItemView ← routeModel&#xa;  (blue solid line, OSRM route)&#xa;• MapPolyline ← nav.routePolyline&#xa;  (red fallback, simple routing)&#xa;───────────────&#xa;Markers:&#xa;• Current position (blue circle, pulsing)&#xa;  - coordinate ← nav.currentPosition&#xa;• Destination (red pin)&#xa;  - coordinate ← destinationCoordinate&#xa;───────────────&#xa;Update Rate:&#xa;• Position: 10Hz (100ms)&#xa;• Route: On calculation complete" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="900" y="360" width="280" height="220" as="geometry" />
+        </mxCell>
+
+        <!-- Navigation UI -->
+        <mxCell id="nav-ui" value="Navigation UI&#xa;───────────────&#xa;Search Box:&#xa;• Input: User text&#xa;• Output → GeocodeModel&#xa;• Results dropdown&#xa;───────────────&#xa;Navigation Panel:&#xa;• Distance ← nav.routeDistance&#xa;• ETA ← nav.eta&#xa;• Instructions&#xa;• Stop button&#xa;───────────────&#xa;Update Rate: 1Hz (1000ms)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="140" width="280" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- Media UI -->
+        <mxCell id="media-ui" value="Media Controls&#xa;───────────────&#xa;Display:&#xa;• Track title ← media.currentTrack&#xa;• Playback state ← media.isPlaying&#xa;• Album art&#xa;───────────────&#xa;Controls:&#xa;• Play/Pause button → media.play()&#xa;• Next/Previous → media.next()&#xa;• Volume slider → media.setVolume()&#xa;───────────────&#xa;Update Rate: On state change" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="320" width="280" height="160" as="geometry" />
+        </mxCell>
+
+        <!-- System Status -->
+        <mxCell id="system-status" value="System Status Display&#xa;───────────────&#xa;• Date/Time (Timer @ 1Hz)&#xa;• WiFi status&#xa;• Bluetooth status&#xa;• Battery level&#xa;• Gear indicator&#xa;───────────────&#xa;Update Rate: 1Hz" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="500" width="280" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Data Flow Arrows -->
+
+        <!-- CAN Bus → VehicleDataController -->
+        <mxCell id="flow1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#b85450;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="can-bus" target="vehicle-controller">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow1-label" value="CAN Frames&#xa;10Hz, 8 bytes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#b85450;" vertex="1" connectable="0" parent="flow1">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint y="-15" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- GPS → NavigationController -->
+        <mxCell id="flow2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#b85450;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="gps-source" target="nav-controller">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow2-label" value="GPS Coordinates&#xa;10Hz" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#b85450;" vertex="1" connectable="0" parent="flow2">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint y="-15" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- User Input → NavigationController -->
+        <mxCell id="flow3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d79b00;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="user-input" target="nav-controller">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow3-label" value="Destination&#xa;Selection" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#d79b00;" vertex="1" connectable="0" parent="flow3">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint y="-15" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- User Input → MediaController -->
+        <mxCell id="flow4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d79b00;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="user-input" target="media-controller">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow4-label" value="Media&#xa;Commands" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#d79b00;" vertex="1" connectable="0" parent="flow4">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint y="-15" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- OSRM API → RouteModel -->
+        <mxCell id="flow5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9673a6;strokeWidth=3;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="osrm-api" target="route-model">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow5-label" value="Route JSON&#xa;Async HTTP" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#9673a6;" vertex="1" connectable="0" parent="flow5">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint x="30" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Nominatim API → GeocodeModel -->
+        <mxCell id="flow6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9673a6;strokeWidth=3;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="nominatim-api" target="geocode-model">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow6-label" value="Location JSON&#xa;Async HTTP" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#9673a6;" vertex="1" connectable="0" parent="flow6">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint x="30" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- RouteModel → NavigationController -->
+        <mxCell id="flow7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#82b366;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="route-model" target="nav-controller">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow7-label" value="Route Data&#xa;Callback" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#82b366;" vertex="1" connectable="0" parent="flow7">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint x="20" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- GeocodeModel → NavigationController -->
+        <mxCell id="flow8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#82b366;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="geocode-model" target="nav-controller">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="840" y="850" />
+              <mxPoint x="840" y="670" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow8-label" value="Coordinates&#xa;Selection" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#82b366;" vertex="1" connectable="0" parent="flow8">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint x="15" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- VehicleDataController → Dashboard -->
+        <mxCell id="flow9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0066CC;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="vehicle-controller" target="dashboard-gauges">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow9-label" value="Vehicle Data&#xa;Property Bindings" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#0066CC;" vertex="1" connectable="0" parent="flow9">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint y="-15" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- NavigationController → Map Display -->
+        <mxCell id="flow10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0066CC;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="nav-controller" target="map-display">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow10-label" value="Position + Route&#xa;Property Bindings" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#0066CC;" vertex="1" connectable="0" parent="flow10">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint y="-15" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- NavigationController → Navigation UI -->
+        <mxCell id="flow11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0066CC;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="nav-controller" target="nav-ui">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="840" y="670" />
+              <mxPoint x="840" y="220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow11-label" value="Nav Data&#xa;(Distance, ETA)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#0066CC;" vertex="1" connectable="0" parent="flow11">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint x="15" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- MediaController → Media UI -->
+        <mxCell id="flow12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0066CC;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1" source="media-controller" target="media-ui">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="840" y="990" />
+              <mxPoint x="840" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow12-label" value="Media State&#xa;Property Bindings" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#0066CC;" vertex="1" connectable="0" parent="flow12">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint x="15" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- VehicleDataController → NavigationController -->
+        <mxCell id="flow13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#FF6B6B;strokeWidth=3;endArrow=block;endFill=1;startArrow=none;startFill=0;" edge="1" parent="1" source="vehicle-controller" target="nav-controller">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="flow13-label" value="Speed Signal&#xa;speedChanged()" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontStyle=1;fontColor=#FF6B6B;" vertex="1" connectable="0" parent="flow13">
+          <mxGeometry x="-0.1" y="1" relative="1" as="geometry">
+            <mxPoint x="15" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Data Processing Notes -->
+        <mxCell id="notes-box" value="Data Processing Pipeline Summary" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1120" width="1440" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pipeline1" value="1. CAN Bus Data Flow:&#xa;───────────────&#xa;CAN Frame (binary) → VehicleDataController (parse, scale, validate) → Qt Properties → QML Bindings → Dashboard Gauges (render)&#xa;&#xa;Rate: 10Hz (100ms)&#xa;Latency: &lt;5ms (immediate property binding)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="100" y="1160" width="660" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pipeline2" value="2. Navigation Data Flow:&#xa;───────────────&#xa;User Search → GeocodeModel (Nominatim API) → Location List → User Selection → RouteModel (OSRM API)&#xa;→ Route JSON → NavigationController (parse, store segments) → Position Updates (10Hz) → Map Display&#xa;&#xa;Route Calculation: ~500-2000ms (API latency)&#xa;Position Updates: 10Hz (100ms), smooth interpolation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="100" y="1240" width="660" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pipeline3" value="3. Media Data Flow:&#xa;───────────────&#xa;User Button Click → MediaController (Qt Multimedia commands) → Audio Output + Property Updates → Media UI Display&#xa;&#xa;Rate: Event-driven (immediate)&#xa;Latency: &lt;10ms" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="780" y="1160" width="720" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pipeline4" value="4. Cross-Controller Communication:&#xa;───────────────&#xa;VehicleDataController.speedChanged() signal → NavigationController.updateVehicleSpeed() slot → Adjusts position update rate&#xa;&#xa;This syncs simulated GPS movement with actual vehicle speed from CAN bus for realistic navigation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;" vertex="1" parent="1">
+          <mxGeometry x="780" y="1240" width="720" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend-box" value="Legend" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="740" width="280" height="340" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#b85450;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1260" y="800" as="sourcePoint" />
+            <mxPoint x="1360" y="800" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend1-label" value="Raw Sensor Data" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="legend1">
+          <mxGeometry x="0.2" y="2" relative="1" as="geometry">
+            <mxPoint x="20" y="-2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="legend2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d79b00;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1260" y="840" as="sourcePoint" />
+            <mxPoint x="1360" y="840" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend2-label" value="User Input Events" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="legend2">
+          <mxGeometry x="0.2" y="2" relative="1" as="geometry">
+            <mxPoint x="20" y="-2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="legend3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9673a6;strokeWidth=3;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1260" y="880" as="sourcePoint" />
+            <mxPoint x="1360" y="880" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend3-label" value="Async API Calls" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="legend3">
+          <mxGeometry x="0.2" y="2" relative="1" as="geometry">
+            <mxPoint x="20" y="-2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="legend4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#82b366;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1260" y="920" as="sourcePoint" />
+            <mxPoint x="1360" y="920" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend4-label" value="Processed Data" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="legend4">
+          <mxGeometry x="0.2" y="2" relative="1" as="geometry">
+            <mxPoint x="20" y="-2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="legend5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0066CC;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1260" y="960" as="sourcePoint" />
+            <mxPoint x="1360" y="960" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend5-label" value="Property Bindings (QML)" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="legend5">
+          <mxGeometry x="0.2" y="2" relative="1" as="geometry">
+            <mxPoint x="20" y="-2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="legend6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#FF6B6B;strokeWidth=3;endArrow=block;endFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1260" y="1000" as="sourcePoint" />
+            <mxPoint x="1360" y="1000" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend6-label" value="Signal/Slot Connections" style="edgeLabel;html=1;align=left;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="legend6">
+          <mxGeometry x="0.2" y="2" relative="1" as="geometry">
+            <mxPoint x="20" y="-2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="legend-notes" value="Data Rates:&#xa;───────────────&#xa;• CAN Bus: 10Hz (100ms intervals)&#xa;• GPS Position: 10Hz (100ms intervals)&#xa;• Navigation Data: 1Hz (1000ms intervals)&#xa;• User Events: Event-driven (immediate)&#xa;• API Calls: Async (500-2000ms latency)&#xa;───────────────&#xa;Processing Latency:&#xa;• Property bindings: &lt;5ms&#xa;• Signal/Slot: &lt;5ms&#xa;• Route calculation: 500-2000ms (network)&#xa;• Location search: 300-1000ms (network)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="1040" width="240" height="180" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
