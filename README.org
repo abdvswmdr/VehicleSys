@@ -128,8 +128,6 @@ sudo ip link add dev vcan0 type vcan && sudo ip link set vcan0 up && ip link sho
 - [ ] Deployment/Automation
     - [ ] Unit tests (gtest)
     - [ ] CI/CD (Docker, GitHub Actions)
-#+HTML: <input type="checkbox" checked disabled> Completed item
-#+HTML: <input type="checkbox" disabled> Incomplete item
 
 ** Completed
 
