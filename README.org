@@ -60,19 +60,20 @@ VehicleSys is an interactive car infotainment system that demonstrates Qt/QML de
 
 *** C4 Model Diagrams
 
-The system architecture is documented using the C4 model with professional PlantUML diagrams. Source: [[file:doc/c4-diagrams.puml][doc/c4-diagrams.puml]]
+The system architecture is documented using the C4 model with professional PlantUML diagrams. Source: [[file:c4-diagrams.puml][c4-diagrams.puml]]
+#+attr_html: :width 1030 :height 826 :align center :alt VehicleSys in Action
 
 **** Level 1: System Context
 The driver uses VehicleSys to view and control the vehicle. The application reads vehicle data from the CAN bus (vcan0) and renders maps using MapboxGL.
-[[file:c4-diagrams_c1-system-context.png]]
+[[file:c1-system-context.png]]
 
 **** Level 2: Container
 A single Qt/QML desktop application integrating all functionality: dashboard telemetry, climate control, media playback, and navigation. The DBC file defines CAN message schemas.
-[[file:c4-diagrams_c2-container.png]]
+[[file:c2-container.png]]
 
 **** Level 3: Component
 The QML UI binds to C++ controllers for system state, vehicle telemetry, HVAC control, and media playback. The CAN Bus Controller handles communication with vehicle hardware via vcan0.
-[[file:c4-diagrams_c3-component.png]]
+[file:c3-component.png]]
 
 ** Configuration
 
