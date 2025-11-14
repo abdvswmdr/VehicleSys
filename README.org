@@ -116,8 +116,9 @@ sudo ip link add dev vcan0 type vcan && sudo ip link set vcan0 up && ip link sho
     - [X] HVAC (dual-zone, climate, 50-90°F)
     - [X] Media control (Qt Multimedia, volume sync)
     - [X] CAN bus controller (vcan0 interface)             
-    - [X] System state (connectivity/[un]lock indicators)
-    - [ ] Location search (async, QtLocation)     
+    - ✅ System state (connectivity/[un]lock indicators)
+    - ⬜️ Location search (async, QtLocation)     
+
 - [X] UI Frontend (QML)
     - [X] Dual-screen (responsive)         
     - [X] <s>OpenStreetMap</s> MapboxGL 
