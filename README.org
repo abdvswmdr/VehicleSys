@@ -128,6 +128,28 @@ sudo ip link add dev vcan0 type vcan && sudo ip link set vcan0 up && ip link sho
 - [ ] Deployment/Automation
     - [ ] Unit tests (gtest)
     - [ ] CI/CD (Docker, GitHub Actions)
+#+HTML: <input type="checkbox" checked disabled> Completed item
+#+HTML: <input type="checkbox" disabled> Incomplete item
+
+** Completed
+
+- #+HTML: <input type="checkbox" checked disabled> Backend (Qt/C++ Controllers)
+    - #+HTML: <input type="checkbox" checked disabled> Vehicle data (telemetry, gauges)
+    - #+HTML: <input type="checkbox" checked disabled> HVAC (dual-zone, climate, 50-90°F)
+    - #+HTML: <input type="checkbox" checked disabled> Media control (Qt Multimedia, volume sync)
+    - #+HTML: <input type="checkbox" checked disabled> CAN bus controller (vcan0 interface)
+    - #+HTML: <input type="checkbox" checked disabled> System state (connectivity/[un]lock indicators)
+    - #+HTML: <input type="checkbox" disabled> Location search (async, QtLocation)
+- #+HTML: <input type="checkbox" checked disabled> UI Frontend (QML)
+    - #+HTML: <input type="checkbox" checked disabled> Dual-screen (responsive)
+    - #+HTML: <input type="checkbox" checked disabled> <s>OpenStreetMap</s> MapboxGL
+    - #+HTML: <input type="checkbox" checked disabled> Real-time map rendering
+    - #+HTML: <input type="checkbox" disabled> Phone Interface
+    - #+HTML: <input type="checkbox" disabled> Parking assistant
+    - #+HTML: <input type="checkbox" disabled> General settings/preferences menu
+- #+HTML: <input type="checkbox" disabled> Deployment/Automation
+    - #+HTML: <input type="checkbox" disabled> Unit tests (gtest)
+    - #+HTML: <input type="checkbox" disabled> CI/CD (Docker, GitHub Actions)
 
 ** Contributing
 
