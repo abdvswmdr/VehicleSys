@@ -65,15 +65,21 @@ The system architecture is documented using the C4 model with professional Plant
 
 **** Level 1: System Context
 The driver uses VehicleSys to view and control the vehicle. The application reads vehicle data from the CAN bus (vcan0) and renders maps using MapboxGL.
+
+#+attr_html: :width 800px :align center :style "border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,0.3);" :alt "C1 System Context" :loading lazy :decoding async
 [[file:c1-system-context.png]]
 
 **** Level 2: Container
 A single Qt/QML desktop application integrating all functionality: dashboard telemetry, climate control, media playback, and navigation. The DBC file defines CAN message schemas.
+
+#+attr_html: :width 800px :align center :style "border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,0.3);" :alt "C2 Container Diagram" :loading lazy :decoding async
 [[file:c2-container.png]]
 
 **** Level 3: Component
 The QML UI binds to C++ controllers for system state, vehicle telemetry, HVAC control, and media playback. The CAN Bus Controller handles communication with vehicle hardware via vcan0.
-[file:c3-component.png]]
+
+#+attr_html: :width 800px :align center :style "border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,0.3);" :alt "C3 Component Diagram" :loading lazy :decoding async
+[[file:c3-component.png]]
 
 ** Configuration
 
