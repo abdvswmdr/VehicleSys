@@ -1,5 +1,5 @@
 #+TITLE: VehicleSys
-#+HTML: <a href="https://github.com/abdvswmdr/VehicleSys/releases"><img alt="Last release" src="https://img.shields.io/github/v/tag/abdvswmdr/VehicleSys?label=release"></a> &nbsp; <a href="https://github.com/abdvswmdr/VehicleSys/blob/main/LICENSE"><img alt="License: GPL v3" src="https://img.shields.io/badge/License-GPLv3-blue.svg"></a><br>
+#+HTML: <a href="https://github.com/abdvswmdr/VehicleSys/releases"><img alt="Last release" src="https://img.shields.io/github/v/tag/abdvswmdr/VehicleSys?label=release"></a> &nbsp; <a href="https://github.com/abdvswmdr/VehicleSys/blob/main/LICENSE"><img alt="License: GPL v3" src="https://img.shields.io/badge/License-GPLv3-blue.svg"></a> &nbsp; <a href="https://github.com/abdvswmdr/VehicleSys/commits"><img alt="Commits since last release" src="https://img.shields.io/github/commits-since/abdvswmdr/VehicleSys/latest"></a> &nbsp; <a href="https://github.com/abdvswmdr/VehicleSys"><img alt="Last commit" src="https://img.shields.io/github/last-commit/abdvswmdr/VehicleSys"></a><br>
 
 #+TITLE: VehicleSys
 
@@ -18,11 +18,17 @@ VehicleSys is an interactive car infotainment system that demonstrates Qt/QML de
 
 *** Prerequisites
 
+
+** Technical Stack
+
 - Linux Ubuntu 24.04
 - [Qt 5.15][https://www.qt.io/blog/qt-5.15-released]>
 - CMake 3.20+
-- C++17  
+- C++17 (backend) / QML (frontend)
+- CAN Bus: SocketCAN interface (vcan0)
+- Navigation: MapboxGL with QtLocation
 - PulseAudio/PipeWire 
+- Qt Multimedia with GStreamer backend
 
 *** Manual Installation
 #+begin_src bash
@@ -50,22 +56,34 @@ VehicleSys is an interactive car infotainment system that demonstrates Qt/QML de
   cp </path/to/your/music/>.mp3 music/
   #+end_src
 
+** Architecture
+
+*** C4 Model Diagrams
+
+The system architecture is documented using the C4 model with professional PlantUML diagrams. Source: [[file:doc/c4-diagrams.puml][doc/c4-diagrams.puml]]
+
+**** Level 1: System Context
+The driver uses VehicleSys to view and control the vehicle. The application reads vehicle data from the CAN bus (vcan0) and renders maps using MapboxGL.
+[[file:c4-diagrams_c1-system-context.png]]
+
+**** Level 2: Container
+A single Qt/QML desktop application integrating all functionality: dashboard telemetry, climate control, media playback, and navigation. The DBC file defines CAN message schemas.
+[[file:c4-diagrams_c2-container.png]]
+
+**** Level 3: Component
+The QML UI binds to C++ controllers for system state, vehicle telemetry, HVAC control, and media playback. The CAN Bus Controller handles communication with vehicle hardware via vcan0.
+[[file:c4-diagrams_c3-component.png]]
+
 ** Configuration
 
-If you encounter the error "Qt Multimedia not available", follow these steps:
+If you encounter audio issues ("Qt Multimedia not available"):
 #+begin_src bash
-sudo apt-get update
-sudo apt-get install qtmultimedia5-dev libqt5multimedia5-plugins libqt5multimedia5
+sudo apt-get install qtmultimedia5-dev libqt5multimedia5-plugins libqt5multimedia5 \
+                     gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
 
-pactl info              # PulseAudio/PipeWire status
-pactl list sinks short  # audio output 
-
-speaker-test -t sine -f 440 -l 1 # Test system audio
-
-rm -rf build/*
-cd build
-cmake ..
-make -j4
+# Rebuild
+rm -rf build && mkdir build && cd build
+cmake .. && make -j4
 #+end_src
 
 *** Music System Architecture
@@ -175,114 +193,22 @@ ldd VehicleSys | grep Qt5Multimedia
 Should show: `libQt5Multimedia.so.5 => /usr/lib/...`
 
 
- 
 ** Features
 
-- =Real-time Vehicle Control=: Lock/unlock functionality with visual feedback
-- =Dual-Zone Climate Control=: Independent driver and passenger HVAC systems (50-90°F)
-- =Intelligent Audio Management=: Dynamic volume control with 4-state visual feedback
-- =Full Music Player System=: Qt Multimedia integration with audio playback, playlist management, and media controls
-- =Music Status Display=: Real-time now-playing information with song/artist display in bottom bar
-- =Interactive Dashboard=: Temperature monitoring, clock display, user profile, and telltale warning lights
-- =Smart Status Bar=: Connectivity indicators (Bluetooth, Wi-Fi, Battery) with system status
-- =Navigation Interface=: Search box with map integration using MapboxGL
-- =Quick Access Controls=: Central navigation icons for music, map, phone, and video
-- =Modern UI Design=: Clean, automotive-inspired interface with responsive layouts
-- =Modular Architecture=: Reusable component system with clean separation of concerns
-- =Property System=: Qt's property system for real-time data binding and updates
+- Dual-zone climate control (50-90°F)
+- Full music player with Qt Multimedia integration
+- Interactive dashboard with gauges and telltales
+- MapboxGL navigation interface
+- Real-time vehicle telemetry (speed, RPM, fuel, temperature)
+- Lock/unlock functionality
+- Connectivity indicators (Bluetooth, Wi-Fi, Battery)
+- Responsive automotive-inspired UI design
 
-**Technical Stack
+** Contributing
 
-- =Framework=: Qt 5.15+ with QML
-- =Language=: C++ (backend) / QML (frontend)  
-- =Build System=: CMake 3.20+
-- =Architecture=: Model-View-Controller (MVC) pattern
-- =Components=: QtQuick, QtLocation, QtPositioning, QtMultimedia
-- =Audio System=: Qt5 Multimedia with GStreamer backend for media playback
-- =Graphics=: Hardware-accelerated rendering with OpenGL/Vulkan support
-## 🎯 Architecture Highlights
+This is a personal learning project showcasing C++ and Qt/QML development. Feedback and suggestions for improvements are welcome!
 
-- =Multi-Controller Backend=: Specialized C++ controllers for system, HVAC, audio, and media management
-- =Qt Multimedia Integration=: Full audio playback system with QMediaPlayer and QMediaPlaylist
-- =Component Modularity=: Reusable QML components with configurable property bindings
-- =Dual Audio Architecture=: Separate AudioController (volume) and MediaController (playback) with synchronized operation
-- =Signal-Slot Pattern=: Reactive programming for real-time UI updates and media state changes
-- =Event-Driven Design=: Mouse area interactions with immediate visual feedback
-- =Resource Management=: Efficient asset loading through Qt's resource system and automatic music scanning
-- =Property Binding=: Automatic UI synchronization with backend data changes and playback state
-- =Conditional Compilation=: CMake-based feature detection for Qt Multimedia with graceful fallback
-- =Audio System Abstraction=: Cross-platform audio support with PulseAudio/PipeWire compatibility
+** License
 
-## 🔧 Development Features
-
-- =Advanced Property System=: Q_PROPERTY macros for seamless C++/QML data binding
-- =Interactive Controls=: Temperature increment/decrement with boundary checking
-- =Dynamic UI States=: Volume icons that change based on audio level
-- =Timer-Based Feedback=: Temporary UI state changes with automatic restoration
-- =Event System=: Comprehensive mouse area handling for user interactions
-- =Memory Management=: RAII principles and Qt's parent-child object model
-- =Type Safety=: Strong typing with Qt's meta-object system
-
-## 🎨 UI Components
-
-### Interactive Bottom Bar
-- =HVACComponent=: Dual-zone temperature controls with +/- buttons and live display
-- =VolumeControlComponent=: Smart audio control with 4-state icon system
-- =MusicPlayerStatus=: Dynamic now-playing display with album art, track info, and stop button
-- =Navigation Icons=: Quick access buttons for music, map, phone, and video apps
-
-### Right Screen Panel
-- =NavigationSearchBox=: Interactive search with dynamic placeholder text
-- =StatusBar=: Top status bar with lock control, real-time clock, temperature, connectivity indicators
-- =Map Integration=: MapboxGL rendering with navigation capabilities
-- =Content Switching=: Seamless transitions between map, music player, and phone interfaces
-
-### Left Screen Panel
-- =VehicleDashboard=: Comprehensive vehicle monitoring with gauges and telltales
-- =Speedometer=: Analog speed gauge with digital display (0-160 km/h)
-- =TachometerGauge=: RPM gauge with red-line indication (0-7000 RPM)
-- =CircularGauge=: Reusable gauge component for fuel and temperature
-- =WarningLight=: Telltale indicators with blinking animations and state management
-
-### Music System Components
-- =MusicPlayerComponent=: Full-screen music player with playlist, controls, and progress
-- =Media Controls=: Play/pause/stop/skip with visual feedback
-- =Playlist Management=: Automatic music directory scanning and track loading
-- =Volume Integration=: Synchronized volume control between UI and audio backend
-
-### System Elements
-- =Dynamic Icons=: Context-aware visual feedback (lock states, volume levels, connectivity)
-- =Responsive Layout=: Components that scale with screen dimensions
-- =Real-time Updates=: Live data binding with automatic UI refresh
-- =State Management=: Intelligent component visibility based on system state
-
-## 📚 Learning Outcomes
-
-This project demonstrates proficiency in:
-- =Advanced Qt/QML Development=: Complex application architecture with multiple interacting components
-- =C++/QML Integration=: Seamless data flow using property system, signals, and invokable methods  
-- =Interactive UI Design=: Touch-friendly automotive interface with immediate feedback
-- =Component-Based Architecture=: Reusable, configurable QML components with clean interfaces
-- =Event-Driven Programming=: Responsive user interaction handling with state management
-- =Build System Mastery=: CMake configuration with automatic MOC/UIC processing
-- =Software Engineering=: Clean code practices, documentation, and version control
-
-
-## 🔄 Future Enhancements
-<!--
-- =Media Playback=: Full music player with playlist management
-- =Advanced Climate=: Automatic climate zones with sensors
-- =Vehicle Diagnostics=: Real-time performance monitoring dashboard  
-- =Connectivity=: Bluetooth device pairing and management
-- =Voice Commands=: Speech recognition for hands-free control
-- =Customization=: User profiles with personalized settings
-- =Animation System=: Smooth transitions and micro-interactions
--->
-## 🤝 Contributing
-
-This is a =personal learning project= designed to enhance C++ and Qt/QML development skills. The project demonstrates software engineering practices and automotive UI development techniques. Feedback and suggestions for improvements are welcome!
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
+This project is open source and available under the [[file:LICENSE][GPL v3 License]].
 
