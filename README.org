@@ -111,24 +111,24 @@ sudo ip link add dev vcan0 type vcan && sudo ip link set vcan0 up && ip link sho
 
 ** Completed
 
-- [X] Backend (Qt/C++ Controllers)
-    - [x] Vehicle data (telemetry, gauges)
-    - [X] HVAC (dual-zone, climate, 50-90°F)
-    - [X] Media control (Qt Multimedia, volume sync)
-    - [X] CAN bus controller (vcan0 interface)             
+- ✅ Backend (Qt/C++ Controllers)
+    - ✅ Vehicle data (telemetry, gauges)
+    - ✅ HVAC (dual-zone, climate, 50-90°F)
+    - ✅ Media control (Qt Multimedia, volume sync)
+    - ✅ CAN bus controller (vcan0 interface)             
     - ✅ System state (connectivity/[un]lock indicators)
     - ⬜️ Location search (async, QtLocation)     
 
-- [X] UI Frontend (QML)
-    - [X] Dual-screen (responsive)         
-    - [X] <s>OpenStreetMap</s> MapboxGL 
-    - [X] Real-time map rendering         
-    - [ ] Phone Interface 
-    - [ ] Parking assistant  
-    - [ ] General settings/preferences menu
-- [ ] Deployment/Automation
-    - [ ] Unit tests (gtest)
-    - [ ] CI/CD (Docker, GitHub Actions)
+- ✅ UI Frontend (QML)
+    - ✅ Dual-screen (responsive)         
+    - ✅ <s>OpenStreetMap</s> MapboxGL 
+    - ✅ Real-time map rendering         
+    - ⬜ Phone Interface 
+    - ⬜ Parking assistant  
+    - ⬜ General settings/preferences menu
+- ⬜ Deployment/Automation
+    - ⬜ Unit tests (gtest)
+    - ⬜ CI/CD (Docker, GitHub Actions)
 
 ** Completed
 
