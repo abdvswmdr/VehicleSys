@@ -112,7 +112,7 @@ sudo ip link add dev vcan0 type vcan && sudo ip link set vcan0 up && ip link sho
 ** Completed
 
 - [X] Backend (Qt/C++ Controllers)
-    - [X] Vehicle data (telemetry, gauges)
+    - [x] Vehicle data (telemetry, gauges)
     - [X] HVAC (dual-zone, climate, 50-90°F)
     - [X] Media control (Qt Multimedia, volume sync)
     - [X] CAN bus controller (vcan0 interface)             
